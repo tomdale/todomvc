@@ -1,7 +1,15 @@
-(function( app ) {
+(function( Todos ) {
 	'use strict';
 
-	var Router = Ember.Router.extend({
+	Todos.Router = Ember.Router.extend({
+		init: function() {
+			this.set('store', Todos.Store.create());
+			return this._super();
+		},
+
+		showFilteredResults: function(filter) {
+			this.get('applicationController').set('filterBy', filter);
+		},
 
 		root: Ember.Route.extend({
 
@@ -9,45 +17,32 @@
 			showActive: Ember.Route.transitionTo( 'active' ),
 			showCompleted: Ember.Route.transitionTo( 'completed' ),
 
+			removeItem: function(router, event) {
+				var applicationController = router.get('applicationController');
+				applicationController.removeObject(event.context);
+			},
+
 			index: Ember.Route.extend({
 				route: '/',
 				connectOutlets: function( router ) {
-					var controller = router.get( 'applicationController' );
-					var context = app.entriesController;
-					context.set( 'filterBy', '' );
-					controller.connectOutlet( 'todos', context )
+					router.showFilteredResults();
 				}
 			}),
 
 			active: Ember.Route.extend({
 				route: '/active',
 				connectOutlets: function( router ) {
-					var controller = router.get( 'applicationController' );
-					var context = app.entriesController;
-					context.set( 'filterBy', 'active' );
-					controller.connectOutlet( 'todos', context )
+					router.showFilteredResults('isActive');
 				}
 			}),
 
 			completed: Ember.Route.extend({
 				route: '/completed',
 				connectOutlets: function( router ) {
-					var controller = router.get( 'applicationController' );
-					var context = app.entriesController;
-					context.set( 'filterBy', 'completed' );
-					controller.connectOutlet( 'todos', context )
-				}
-			}),
-
-			specs: Ember.Route.extend({
-				route: '/specs',
-				connectOutlets: function() {
-					// TODO: Write them
+					router.showFilteredResults('isCompleted');
 				}
 			})
 		})
 	});
-
-	app.Router = Router;
 
 })( window.Todos );

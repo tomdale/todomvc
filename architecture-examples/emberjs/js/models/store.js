@@ -1,4 +1,4 @@
-(function( app ) {
+(function(Todos) {
 	'use strict';
 
 	var Store = function( name ) {
@@ -14,7 +14,7 @@
 		// Wrapper around `this.create`
 		// Creates a `Todo` model object out of the title
 		this.createFromTitle = function( title ) {
-			var todo = app.Todo.create({
+			var todo = Todos.Todo.create({
 				title: title,
 				store: this
 			});
@@ -32,7 +32,7 @@
 		// Update a model by replacing its copy in `this.data`.
 		this.update = function( model ) {
 			this.data[ model.get( 'id' ) ] = model.getProperties(
-				'id', 'title', 'completed'
+				'id', 'title', 'isCompleted'
 			);
 			this.save();
 			return model;
@@ -40,7 +40,7 @@
 
 		// Retrieve a model from `this.data` by id.
 		this.find = function( model ) {
-			var todo = app.Todo.create( this.data[ model.get( 'id' ) ] );
+			var todo = Todos.Todo.create( this.data[ model.get( 'id' ) ] );
 			todo.set( 'store', this );
 			return todo;
 		};
@@ -51,7 +51,7 @@
 			key;
 
 			for ( key in this.data ) {
-				var todo = app.Todo.create( this.data[ key ] );
+				var todo = Todos.Todo.create( this.data[ key ] );
 				todo.set( 'store', this );
 				result.push( todo );
 			}
@@ -67,6 +67,31 @@
 		};
 	};
 
-	app.Store = Store;
+	Store.create = function() {
+		return new Store();
+	};
+
+	Todos.Store = Store;
+
+	// This would normally be handled automatically for you by
+	// Ember Data.
+	Ember.onLoad('Ember.Application', function(Application) {
+		Application.registerInjection({
+			name: "giveStoreToControllers",
+			after: ['controllers'],
+
+			injection: function(app, stateManager, property) {
+				if (!stateManager) { return; }
+				if (/^[A-Z].*Controller$/.test(property)) {
+					var controllerName = property.charAt(0).toLowerCase() + property.substr(1);
+					var store = stateManager.get('store');
+					var controller = stateManager.get(controllerName);
+					if(!controller) { return; }
+
+					controller.set('store', store);
+				}
+			}
+		});
+	});
 
 })( window.Todos );
