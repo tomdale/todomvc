@@ -1,5 +1,5 @@
-// Version: v1.0.0-pre.2
-// Last commit: b851567 (2012-10-25 12:56:33 -0700)
+// Version: v1.0.0-pre.2-7-ga5c210f
+// Last commit: a5c210f (2012-10-31 13:14:10 -0700)
 
 
 (function() {
@@ -140,8 +140,8 @@ window.ember_deprecateFunc  = Ember.deprecateFunc("ember_deprecateFunc is deprec
 
 })();
 
-// Version: v1.0.0-pre.2
-// Last commit: b851567 (2012-10-25 12:56:33 -0700)
+// Version: v1.0.0-pre.2-7-ga5c210f
+// Last commit: a5c210f (2012-10-31 13:14:10 -0700)
 
 
 (function() {
@@ -9985,7 +9985,7 @@ Ember.ArrayProxy = Ember.Object.extend(Ember.MutableArray,
     @return {void}
   */
   replaceContent: function(idx, amt, objects) {
-    get(this, 'arrangedContent').replace(idx, amt, objects);
+    get(this, 'content').replace(idx, amt, objects);
   },
 
   /**
@@ -10835,16 +10835,6 @@ var get = Ember.get, set = Ember.set, forEach = Ember.EnumerableUtils.forEach;
 Ember.SortableMixin = Ember.Mixin.create(Ember.MutableEnumerable, {
   sortProperties: null,
   sortAscending: true,
-
-  addObject: function(obj) {
-    var content = get(this, 'content');
-    content.pushObject(obj);
-  },
-
-  removeObject: function(obj) {
-    var content = get(this, 'content');
-    content.removeObject(obj);
-  },
 
   orderBy: function(item1, item2) {
     var result = 0,
@@ -20742,7 +20732,7 @@ EmberHandlebars.registerHelper('bind', function(property, options) {
   @private
 
   Use the `boundIf` helper to create a conditional that re-evaluates
-  whenever the bound value changes.
+  whenever the truthiness of the bound value changes.
 
   ``` handlebars
   {{#boundIf "content.shouldDisplayTitle"}}
@@ -20816,6 +20806,8 @@ EmberHandlebars.registerHelper('with', function(context, options) {
 
 
 /**
+  See `boundIf`
+
   @method if
   @for Ember.Handlebars.helpers
   @param {Function} context
@@ -23490,8 +23482,8 @@ Ember Handlebars
 
 })();
 
-// Version: v1.0.0-pre.2
-// Last commit: b851567 (2012-10-25 12:56:33 -0700)
+// Version: v1.0.0-pre.2-7-ga5c210f
+// Last commit: a5c210f (2012-10-31 13:14:10 -0700)
 
 
 (function() {
