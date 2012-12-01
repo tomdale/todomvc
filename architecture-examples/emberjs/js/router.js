@@ -1,7 +1,11 @@
 Todos.Router = Ember.Router.extend({
+	showFilteredResults: function(state) {
+		this.set('applicationController.currentFilter', state);
+	},
+
 	root: Ember.Route.extend({
 
-		showAll: Ember.Route.transitionTo( 'index' ),
+		showAll: Ember.Route.transitionTo( 'all' ),
 		showActive: Ember.Route.transitionTo( 'active' ),
 		showCompleted: Ember.Route.transitionTo( 'completed' ),
 
@@ -20,34 +24,43 @@ Todos.Router = Ember.Router.extend({
 			var controller = router.get('applicationController');
 
 			var completed = controller.filterProperty('isCompleted', true);
-			completed.forEach(this.removeObject, this);
+			completed.invoke('deleteRecord');
+			router.get('store').commit();
 		},
 
 		removeItem: function(router, event) {
 			event.context.deleteRecord();
+			router.get('store').commit();
 		},
 
 		index: Ember.Route.extend({
 			route: '/',
+
 			connectOutlets: function( router ) {
 				var appController = router.get('applicationController');
-
 				appController.set('content', Todos.Todo.find());
-			}
-		}),
+			},
 
-		active: Ember.Route.extend({
-			route: '/active',
-			connectOutlets: function( router ) {
-				router.showFilteredResults('isActive');
-			}
-		}),
+			all: Ember.Route.extend({
+				route: '/',
+				connectOutlets: function( router ) {
+					router.showFilteredResults(null);
+				}
+			}),
 
-		completed: Ember.Route.extend({
-			route: '/completed',
-			connectOutlets: function( router ) {
-				router.showFilteredResults('isCompleted');
-			}
+			active: Ember.Route.extend({
+				route: '/active',
+				connectOutlets: function( router ) {
+					router.showFilteredResults('active');
+				}
+			}),
+
+			completed: Ember.Route.extend({
+				route: '/completed',
+				connectOutlets: function( router ) {
+					router.showFilteredResults('completed');
+				}
+			})
 		})
 	})
 });

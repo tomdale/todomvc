@@ -1,4 +1,17 @@
 Todos.ApplicationController = Ember.ArrayController.extend({
+  currentFilter: null,
+
+  filteredContent: function(){
+    var filter = this.get('currentFilter');
+    if (filter === "active"){
+      return this.filterProperty('isCompleted', false);
+    } else if(filter === "completed"){
+      return this.filterProperty('isCompleted');
+    } else {
+      return this;
+    }
+  }.property('content', 'currentFilter', '@each.isCompleted'),
+
   remaining: function() {
     return this.filterProperty( 'isCompleted', false ).get( 'length' );
   }.property( '@each.isCompleted' ),

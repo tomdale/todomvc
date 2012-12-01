@@ -5,7 +5,9 @@ Todos.TodoView = Ember.View.extend({
 	classNames: ['view'],
 	classNameBindings: ['content.isCompleted:completed', 'isEditing:editing'],
 
+  contextBinding: "content",
+
 	doubleClick: function() {
-		this.set('editing', true);
+		this.set('isEditing', true);
 	}
 });
