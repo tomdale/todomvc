@@ -3,24 +3,25 @@ Todos.EditTodoView = Ember.TextField.extend({
 
 	contentBinding: 'parentView.content',
 	valueBinding: 'content.title',
-
-	change: function() {
-		var value = this.get('value');
-
-		if (Ember.empty(value)) {
-			var controller = this.get('controller');
-			var todo = this.get('content');
-
-			controller.removeObject(todo);
-		}
-	},
+	isEditingBinding: "parentView.isEditing",
 
 	focusOut: function() {
-		this.set('isEditing', false);
+		this.finishEditing();
 	},
 
 	insertNewline: function() {
+		this.finishEditing();
+	},
+
+	finishEditing: function(){
+		var value = this.get('value');
+
+		if (Ember.empty(value)) {
+			this.get('content').deleteRecord();
+		}
+
 		this.set('isEditing', false);
+		this.get('controller.store').commit();
 	},
 
 	didInsertElement: function() {
