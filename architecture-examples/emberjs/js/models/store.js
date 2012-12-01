@@ -1,4 +1,4 @@
 Todos.Store = DS.Store.extend({
-	revision: 7,
-	adapter: 'DS.IndexedDBAdapter'
+	revision: 9,
+	adapter: 'DS.LSAdapter'
 });
