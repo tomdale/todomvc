@@ -1,53 +1,39 @@
-Todos.Router = Ember.Router.extend({
-	root: Ember.Route.extend({
+Todos.Router.map(function() {
+  this.resource('todos', { path: '/' }, function() {
+    this.route('active');
+    this.route('completed');
+  });
+});
 
-		showAll: Ember.Route.transitionTo( 'index' ),
-		showActive: Ember.Route.transitionTo( 'active' ),
-		showCompleted: Ember.Route.transitionTo( 'completed' ),
+Todos.TodosRoute = Ember.Route.extend({
+  model: function() {
+    return Todos.Todo.find();
+  }
+});
 
-		createTodo: function(router, value) {
-			if (!value.trim()) { return; }
+Todos.TodosIndexRoute = Ember.Route.extend({
+  setupController: function() {
+    var todos = Todos.Todo.find();
+    this.controllerFor('todos').set('filteredTodos', todos);
+  }
+});
 
-			Todos.Todo.createRecord({
-				title: value,
-				isCompleted: false
-			});
+Todos.TodosActiveRoute = Ember.Route.extend({
+  setupController: function() {
+    var todos = Todos.Todo.filter(function(todo) {
+      if (!todo.get('isCompleted')) { return true; }
+    });
 
-			router.get('store').commit();
-		},
+    this.controllerFor('todos').set('filteredTodos', todos);
+  }
+});
 
-		clearCompleted: function(router) {
-			var controller = router.get('applicationController');
+Todos.TodosCompletedRoute = Ember.Route.extend({
+  setupController: function() {
+    var todos = Todos.Todo.filter(function(todo) {
+      if (todo.get('isCompleted')) { return true; }
+    });
 
-			var completed = controller.filterProperty('isCompleted', true);
-			completed.forEach(this.removeObject, this);
-		},
-
-		removeItem: function(router, event) {
-			event.context.deleteRecord();
-		},
-
-		index: Ember.Route.extend({
-			route: '/',
-			connectOutlets: function( router ) {
-				var appController = router.get('applicationController');
-
-				appController.set('content', Todos.Todo.find());
-			}
-		}),
-
-		active: Ember.Route.extend({
-			route: '/active',
-			connectOutlets: function( router ) {
-				router.showFilteredResults('isActive');
-			}
-		}),
-
-		completed: Ember.Route.extend({
-			route: '/completed',
-			connectOutlets: function( router ) {
-				router.showFilteredResults('isCompleted');
-			}
-		})
-	})
+    this.controllerFor('todos').set('filteredTodos', todos);
+  }
 });

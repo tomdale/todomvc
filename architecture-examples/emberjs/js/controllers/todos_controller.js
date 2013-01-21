@@ -1,4 +1,25 @@
-Todos.ApplicationController = Ember.ArrayController.extend({
+Todos.TodosController = Ember.ArrayController.extend({
+  createTodo: function(value) {
+    if (!value.trim()) { return; }
+
+    Todos.Todo.createRecord({
+      title: value,
+      isCompleted: false
+    });
+
+    this.commit();
+  },
+
+  removeTodo: function(todo) {
+    todo.deleteRecord();
+    this.commit();
+  },
+
+  clearCompleted: function() {
+    var completed = this.filterProperty('isCompleted', true);
+    completed.forEach(this.removeTodo, this);
+  },
+
   remaining: function() {
     return this.filterProperty( 'isCompleted', false ).get( 'length' );
   }.property( '@each.isCompleted' ),
@@ -25,5 +46,9 @@ Todos.ApplicationController = Ember.ArrayController.extend({
       return !!this.get( 'length' ) &&
         this.everyProperty( 'isCompleted', true );
     }
-  }.property( '@each.isCompleted' )
+  }.property( '@each.isCompleted' ),
+
+  commit: function() {
+    this.get('store').commit();
+  }
 });

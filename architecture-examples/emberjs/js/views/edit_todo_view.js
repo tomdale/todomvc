@@ -1,13 +1,12 @@
 Todos.EditTodoView = Ember.TextField.extend({
 	classNames: ['edit'],
 
-	contentBinding: 'parentView.content',
-	valueBinding: 'content.title',
+  valueBinding: 'todo.title',
 
 	change: function() {
 		var value = this.get('value');
 
-		if (Ember.empty(value)) {
+		if (Ember.isEmpty(value)) {
 			var controller = this.get('controller');
 			var todo = this.get('content');
 
@@ -16,11 +15,11 @@ Todos.EditTodoView = Ember.TextField.extend({
 	},
 
 	focusOut: function() {
-		this.set('isEditing', false);
+		this.set('parentView.isEditing', false);
 	},
 
 	insertNewline: function() {
-		this.set('isEditing', false);
+		this.set('parentView.isEditing', false);
 	},
 
 	didInsertElement: function() {
